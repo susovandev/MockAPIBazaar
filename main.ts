@@ -1,3 +1,11 @@
-import { sayHello } from '@/app.js';
+import { App } from '@/app.js';
 
-sayHello();
+class Main {
+    run() {
+        const app = new App();
+        app.start();
+    }
+}
+
+const main = new Main();
+main.run();
