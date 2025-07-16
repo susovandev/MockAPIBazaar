@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { config } from '@/config/_config.js';
 import { CustomError } from '@/utils/customErrors.js';
+import Logger from '@/utils/logger.js';
 import { Request, Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
@@ -10,7 +11,7 @@ const globalErrorHandler = (
     res: Response,
     _next: NextFunction,
 ) => {
-    console.log(err);
+    Logger.error(`[Global Error]: ${err}`);
     if (err instanceof CustomError) {
         res.status(err.statusCode).json({
             status: err.status,

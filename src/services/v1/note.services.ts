@@ -18,7 +18,7 @@ class NoteServices {
         }
 
         const note = await this.notesDao.getNoteById(noteId);
-        
+
         if (!note) {
             throw new NotFoundException('Note not found');
         }

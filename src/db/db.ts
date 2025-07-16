@@ -1,4 +1,5 @@
 import { config } from '@/config/_config.js';
+import Logger from '@/utils/logger.js';
 import { connect } from 'mongoose';
 
 const connectDB = async () => {
@@ -8,13 +9,12 @@ const connectDB = async () => {
                 ? config.database.development_uri
                 : config.database.production_uri,
         );
-        console.log(`DATABASE CONNECTED SUCCESSFULLY: \n
-            DATABASE HOST: ${connectionInstance.connection.host}\n
-            DATABASE NAME: ${connectionInstance.connection.name}\n
-            DATABASE PORT: ${connectionInstance.connection.port}\n
-            `);
+        Logger.info('DATABASE CONNECTED SUCCESSFULLY');
+        Logger.info(`HOST: ${connectionInstance.connection.host}`);
+        Logger.info(`DB NAME: ${connectionInstance.connection.name}`);
+        Logger.info(`PORT: ${connectionInstance.connection.port}`);
     } catch (error) {
-        console.log(`DATABASE CONNECTION ERROR: ${error}`);
+        Logger.error(`DATABASE CONNECTION ERROR: ${error}`);
         process.exit(1);
     }
 };

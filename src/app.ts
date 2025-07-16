@@ -4,6 +4,7 @@ import { config } from '@/config/_config.js';
 import { appRoutes } from './routes/index.js';
 import globalErrorHandler from './middlewares/error.middleware.js';
 import { NotFoundException } from './utils/customErrors.js';
+import Logger from './utils/logger.js';
 
 export class App {
     app: Application;
@@ -36,7 +37,9 @@ export class App {
             '/*splat',
             (req: Request, _: Response, next: NextFunction) => {
                 next(
-                    new NotFoundException(`Route ${req.originalUrl} not found`),
+                    new NotFoundException(
+                        `Can't find ${req.originalUrl} on this server!`,
+                    ),
                 );
             },
         );
@@ -44,7 +47,7 @@ export class App {
     }
     private serverListen() {
         this.app.listen(config.port, () => {
-            console.log(
+            Logger.debug(
                 `Server is running on http://localhost:${config.port} in ${config.node_env} mode`,
             );
         });
