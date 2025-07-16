@@ -1,4 +1,6 @@
 import express, { Application } from 'express';
+import connectDB from '@/db/db.js';
+import { config } from '@/config/_config.js';
 
 export class App {
     app: Application;
@@ -6,13 +8,19 @@ export class App {
         this.app = express();
     }
 
-    start() {
+    async start() {
+        await this.databaseConnection();
         this.serverListen();
     }
 
+    private async databaseConnection() {
+        await connectDB();
+    }
     private serverListen() {
-        this.app.listen(3000, () => {
-            console.log('Server is running on port 3000');
+        this.app.listen(config.port, () => {
+            console.log(
+                `Server is running on http://localhost:${config.port} in ${config.node_env} mode`,
+            );
         });
     }
 }
