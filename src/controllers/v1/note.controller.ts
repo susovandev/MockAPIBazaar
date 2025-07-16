@@ -2,6 +2,7 @@ import { TCreateNoteDTO, TResponseNoteDTO } from '@/dtos/index.js';
 import { noteServices } from '@/services/index.js';
 import { ApiResponse } from '@/utils/apiResponse.js';
 import { Request, Response, NextFunction } from 'express';
+import { StatusCodes } from 'http-status-codes';
 
 class NoteController {
     async createNote(
@@ -13,8 +14,12 @@ class NoteController {
             console.log(req.body);
             const note = await noteServices.createNote(req.body);
 
-            res.status(201).json(
-                new ApiResponse(201, 'Note created successfully', note),
+            res.status(StatusCodes.CREATED).json(
+                new ApiResponse(
+                    StatusCodes.CREATED,
+                    'Note created successfully',
+                    note,
+                ),
             );
         } catch (error) {
             next(error);
