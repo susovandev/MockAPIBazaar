@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npm run format && npm run lint && tsx watch main.ts",
-    "build": "npm run format && npm run lint && tsc",
+    "build": "npm run format && npm run lint && tsc && tsc-alias",
     "start": "node dist/main.js",
     "format": "prettier --write \"**/*.{js,ts,jsx,tsx,json,md}\"",
     "check-format": "prettier --check \"**/*.{js,ts,jsx,tsx,json,md}\"",
@@ -23,6 +23,7 @@
     "globals": "^16.3.0",
     "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.16",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.37.0"

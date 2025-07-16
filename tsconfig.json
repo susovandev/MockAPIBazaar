@@ -5,6 +5,10 @@
     "rootDir": ".",
     "moduleResolution": "nodenext",
     "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
     "removeComments": true,
     "esModuleInterop": true,
     "strict": true,

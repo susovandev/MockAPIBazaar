@@ -1,1 +1,3 @@
-console.log('Hello World');
+import { sayHello } from '@/app.js';
+
+sayHello();
