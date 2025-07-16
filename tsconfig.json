@@ -1,24 +1,24 @@
 {
-    "compilerOptions": {
-        "target": "es2022",
-        "module": "nodenext",
-        "rootDir": ".",
-        "moduleResolution": "nodenext",
-        "outDir": "./dist",
-        "removeComments": true,
-        "esModuleInterop": true,
-        "strict": true,
-        "noImplicitAny": true,
-        "strictNullChecks": true,
-        "strictFunctionTypes": true,
-        "alwaysStrict": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "noImplicitReturns": true,
-        "noImplicitOverride": true,
-        "allowUnusedLabels": true,
-        "allowUnreachableCode": true,
-        "skipDefaultLibCheck": true,
-        "skipLibCheck": true
-    }
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "nodenext",
+    "rootDir": ".",
+    "moduleResolution": "nodenext",
+    "outDir": "./dist",
+    "removeComments": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noImplicitOverride": true,
+    "allowUnusedLabels": true,
+    "allowUnreachableCode": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true
+  }
 }
