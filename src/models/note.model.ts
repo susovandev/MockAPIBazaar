@@ -1,4 +1,4 @@
-import { INoteSchemaShape } from '@/interfaces/notes.interface.js';
+import { INoteSchemaShape } from '@/interfaces/note.interface.js';
 import { Schema, model } from 'mongoose';
 
 const noteSchema: Schema<INoteSchemaShape> = new Schema(
