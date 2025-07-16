@@ -54,3 +54,11 @@ export class ServerException extends CustomError {
         super(message);
     }
 }
+
+export class PaymentRequiredException extends CustomError {
+    statusCode = StatusCodes.PAYMENT_REQUIRED;
+    status = false;
+    constructor(message: string) {
+        super(message);
+    }
+}
