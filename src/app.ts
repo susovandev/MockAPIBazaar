@@ -1,7 +1,9 @@
-import express, { Application } from 'express';
+import express, { Request, Response, Application, NextFunction } from 'express';
 import connectDB from '@/db/db.js';
 import { config } from '@/config/_config.js';
 import { appRoutes } from './routes/index.js';
+import globalErrorHandler from './middlewares/error.middleware.js';
+import { NotFoundException } from './utils/customErrors.js';
 
 export class App {
     app: Application;
@@ -13,6 +15,7 @@ export class App {
         await this.databaseConnection();
         this.setupMiddlewares();
         this.setupRoutes();
+        this.setupGlobalErrors();
         this.serverListen();
     }
 
@@ -26,6 +29,18 @@ export class App {
     }
     private setupRoutes() {
         appRoutes(this.app);
+    }
+
+    private setupGlobalErrors() {
+        this.app.all(
+            '/*splat',
+            (req: Request, _: Response, next: NextFunction) => {
+                next(
+                    new NotFoundException(`Route ${req.originalUrl} not found`),
+                );
+            },
+        );
+        this.app.use(globalErrorHandler);
     }
     private serverListen() {
         this.app.listen(config.port, () => {

@@ -9,7 +9,7 @@ export class NoteDAO {
         return await Note.create(noteData);
     }
 
-    async getNoteById(noteId: ObjectId | string): Promise<INoteSchemaShape> {
+    async getNoteById(noteId: ObjectId): Promise<INoteSchemaShape> {
         const note = await Note.findById(noteId);
         if (!note) {
             throw new NotFoundException('Note not found');

@@ -1,17 +1,17 @@
 import { TCreateNoteDTO, TResponseNoteDTO } from '@/dtos/index.js';
 import { noteServices } from '@/services/index.js';
 import { ApiResponse } from '@/utils/apiResponse.js';
-import { Request, Response, NextFunction } from 'express';
+import { asyncHandler } from '@/utils/asyncHandler.js';
+import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { ObjectId } from 'mongoose';
 
 class NoteController {
-    async createNote(
-        req: Request<unknown, unknown, TCreateNoteDTO>,
-        res: Response<ApiResponse<TResponseNoteDTO>>,
-        next: NextFunction,
-    ) {
-        try {
+    createNote = asyncHandler(
+        async (
+            req: Request<unknown, unknown, TCreateNoteDTO>,
+            res: Response<ApiResponse<TResponseNoteDTO>>,
+        ) => {
             console.log(req.body);
             const note = await noteServices.createNote(req.body);
 
@@ -22,17 +22,13 @@ class NoteController {
                     note,
                 ),
             );
-        } catch (error) {
-            next(error);
-        }
-    }
-    async getNoteById(
-        req: Request<{ id: ObjectId | string }>,
-        res: Response,
-        next: NextFunction,
-    ) {
-        try {
+        },
+    );
+
+    getNoteById = asyncHandler(
+        async (req: Request<{ id: ObjectId }>, res: Response) => {
             const note = await noteServices.getNoteById(req.params.id);
+            
             res.status(StatusCodes.OK).json(
                 new ApiResponse(
                     StatusCodes.OK,
@@ -40,10 +36,7 @@ class NoteController {
                     note,
                 ),
             );
-        } catch (error) {
-            next(error);
-        }
-    }
+        },
+    );
 }
-
 export default new NoteController();

@@ -3,6 +3,7 @@ import { NoteDAO } from '@/dao/index.js';
 import { INoteSchemaShape } from '@/interfaces/note.interface.js';
 import { NotFoundException } from '@/utils/customErrors.js';
 import { ObjectId } from 'mongoose';
+import { isValidMongoObjectId } from '@/utils/isValidObjectId.js';
 
 class NoteServices {
     constructor(private readonly notesDao: NoteDAO) {}
@@ -11,8 +12,13 @@ class NoteServices {
         return note;
     }
 
-    async getNoteById(noteId: ObjectId | string): Promise<INoteSchemaShape> {
+    async getNoteById(noteId: ObjectId): Promise<INoteSchemaShape> {
+        if (!isValidMongoObjectId(noteId)) {
+            throw new NotFoundException('Invalid note id');
+        }
+
         const note = await this.notesDao.getNoteById(noteId);
+        
         if (!note) {
             throw new NotFoundException('Note not found');
         }
