@@ -1,3 +1,3 @@
-import { CreateNoteSchema } from './v1/note.validation.js';
+import { CreateNoteSchema, UpdateNoteSchema } from './v1/note.validation.js';
 
-export { CreateNoteSchema };
+export { CreateNoteSchema, UpdateNoteSchema };

@@ -1,5 +1,5 @@
-import { isValidObjectId, ObjectId } from 'mongoose';
+import { isValidObjectId } from 'mongoose';
 
-export const isValidMongoObjectId = (mongoId: ObjectId): boolean => {
+export const isValidMongoObjectId = (mongoId: string): boolean => {
     return isValidObjectId(mongoId);
 };

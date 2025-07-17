@@ -1,8 +1,7 @@
-import { TCreateNoteDTO } from '@/dtos/index.js';
+import { TCreateNoteDTO, TUpdateNoteDTO } from '@/dtos/index.js';
 import { NoteDAO } from '@/dao/index.js';
 import { INoteSchemaShape } from '@/interfaces/note.interface.js';
 import { NotFoundException } from '@/utils/customErrors.js';
-import { ObjectId } from 'mongoose';
 import { isValidMongoObjectId } from '@/utils/isValidObjectId.js';
 
 class NoteServices {
@@ -12,12 +11,28 @@ class NoteServices {
         return note;
     }
 
-    async getNoteById(noteId: ObjectId): Promise<INoteSchemaShape> {
+    async getNoteById(noteId: string): Promise<INoteSchemaShape> {
         if (!isValidMongoObjectId(noteId)) {
             throw new NotFoundException('Invalid note id');
         }
 
         const note = await this.notesDao.getNoteById(noteId);
+
+        if (!note) {
+            throw new NotFoundException('Note not found');
+        }
+        return note;
+    }
+
+    async updateNoteById(
+        noteId: string,
+        noteData: TUpdateNoteDTO,
+    ): Promise<INoteSchemaShape> {
+        if (!isValidMongoObjectId(noteId)) {
+            throw new NotFoundException('Invalid note id');
+        }
+
+        const note = await this.notesDao.updateNoteById(noteId, noteData);
 
         if (!note) {
             throw new NotFoundException('Note not found');

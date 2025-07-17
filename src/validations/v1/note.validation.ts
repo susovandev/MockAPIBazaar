@@ -1,5 +1,5 @@
 import Joi, { ObjectSchema } from 'joi';
-import { TCreateNoteDTO } from '@/dtos/index.js';
+import { TCreateNoteDTO, TUpdateNoteDTO } from '@/dtos/index.js';
 
 export const CreateNoteSchema: ObjectSchema<TCreateNoteDTO> = Joi.object({
     title: Joi.string().min(1).max(100).required(),
@@ -10,3 +10,12 @@ export const CreateNoteSchema: ObjectSchema<TCreateNoteDTO> = Joi.object({
     colorLabel: Joi.string().optional(),
     reminderAt: Joi.date().optional(),
 });
+
+export const UpdateNoteSchema: ObjectSchema<TUpdateNoteDTO> = Joi.object({
+    title: Joi.string().min(1).max(100),
+    content: Joi.string().min(1),
+    tags: Joi.array().items(Joi.string()),
+    priority: Joi.string().valid('low', 'medium', 'high'),
+    colorLabel: Joi.string(),
+    reminderAt: Joi.date(),
+}).or('title', 'content', 'tags', 'priority', 'colorLabel', 'reminderAt');

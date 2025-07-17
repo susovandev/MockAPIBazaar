@@ -1,19 +1,23 @@
-import { TCreateNoteDTO } from '@/dtos/index.js';
+import { TCreateNoteDTO, TUpdateNoteDTO } from '@/dtos/index.js';
 import { INoteSchemaShape } from '@/interfaces/note.interface.js';
 import { Note } from '@/models/note.model.js';
-import { NotFoundException } from '@/utils/customErrors.js';
-import { ObjectId } from 'mongoose';
 
 export class NoteDAO {
     async createNote(noteData: TCreateNoteDTO): Promise<INoteSchemaShape> {
         return await Note.create(noteData);
     }
 
-    async getNoteById(noteId: ObjectId): Promise<INoteSchemaShape> {
+    async getNoteById(noteId: string): Promise<INoteSchemaShape | null> {
         const note = await Note.findById(noteId);
-        if (!note) {
-            throw new NotFoundException('Note not found');
-        }
         return note;
+    }
+
+    async updateNoteById(
+        noteId: string,
+        noteData: TUpdateNoteDTO,
+    ): Promise<INoteSchemaShape | null> {
+        return await Note.findByIdAndUpdate({ _id: noteId }, noteData, {
+            new: true,
+        });
     }
 }
