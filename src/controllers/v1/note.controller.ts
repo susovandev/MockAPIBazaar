@@ -71,5 +71,17 @@ class NoteController {
             );
         },
     );
+
+    deleteNoteById = asyncHandler(
+        async (req: Request<{ id: string }>, res: Response) => {
+            Logger.info(`Deleting note with id: ${req.params.id}`);
+
+            await noteServices.deleteNoteById(req.params.id);
+
+            res.status(StatusCodes.OK).json(
+                new ApiResponse(StatusCodes.OK, 'Note deleted successfully'),
+            );
+        },
+    );
 }
 export default new NoteController();

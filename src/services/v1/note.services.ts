@@ -39,6 +39,18 @@ class NoteServices {
         }
         return note;
     }
+
+    async deleteNoteById(noteId: string) {
+        if (!isValidMongoObjectId(noteId)) {
+            throw new NotFoundException('Invalid note id');
+        }
+
+        const note = await this.notesDao.deleteNoteById(noteId);
+
+        if (!note) {
+            throw new NotFoundException('Note not found');
+        }
+    }
 }
 
 export default new NoteServices(new NoteDAO());

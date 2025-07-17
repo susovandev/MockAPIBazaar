@@ -12,5 +12,6 @@ noteRouter.route('/:id').get(noteControllers.getNoteById);
 noteRouter
     .route('/:id')
     .put(schemaValidator(UpdateNoteSchema), noteControllers.updateNoteById);
+noteRouter.route('/:id').delete(noteControllers.deleteNoteById);
 
 export default noteRouter;

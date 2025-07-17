@@ -18,6 +18,10 @@ export class NoteDAO {
     ): Promise<INoteSchemaShape | null> {
         return await Note.findByIdAndUpdate({ _id: noteId }, noteData, {
             new: true,
-        });
+        }).lean();
+    }
+
+    async deleteNoteById(noteId: string): Promise<INoteSchemaShape | null> {
+        return await Note.findByIdAndDelete(noteId).lean();
     }
 }
