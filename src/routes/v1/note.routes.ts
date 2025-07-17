@@ -17,4 +17,5 @@ noteRouter.route('/:id').delete(noteControllers.deleteNoteById);
 // Extra features
 noteRouter.patch('/:id/pin', noteControllers.togglePinNote);
 noteRouter.patch('/:id/archive', noteControllers.toggleArchiveNote);
+noteRouter.patch('/:id/trash', noteControllers.toggleTrashNote);
 export default noteRouter;

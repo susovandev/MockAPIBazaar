@@ -65,7 +65,7 @@ class NoteServices {
             isPinned: !note.isPinned,
         });
     }
-    
+
     async toggleArchiveNote(noteId: string): Promise<INoteSchemaShape | null> {
         if (!isValidMongoObjectId(noteId)) {
             throw new NotFoundException('Invalid note id');
@@ -76,6 +76,19 @@ class NoteServices {
         }
         return await this.notesDao.updateNoteById(noteId, {
             isArchived: !note.isArchived,
+        });
+    }
+
+    async toggleTrashNote(noteId: string): Promise<INoteSchemaShape | null> {
+        if (!isValidMongoObjectId(noteId)) {
+            throw new NotFoundException('Invalid note id');
+        }
+        const note = await this.notesDao.getNoteById(noteId);
+        if (!note) {
+            throw new NotFoundException('Note not found');
+        }
+        return await this.notesDao.updateNoteById(noteId, {
+            isTrashed: !note.isTrashed,
         });
     }
 }
