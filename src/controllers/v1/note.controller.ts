@@ -96,5 +96,19 @@ class NoteController {
             );
         },
     );
+
+    toggleArchiveNote = asyncHandler(
+        async (req: Request<{ id: string }>, res: Response) => {
+            Logger.info(`Toggling archive note with id: ${req.params.id}`);
+
+            const note = await noteServices.toggleArchiveNote(req.params.id);
+
+            res.status(StatusCodes.OK).json(
+                new ApiResponse(StatusCodes.OK, 'Archive toggled', note),
+            );
+        },
+    );
+
+    
 }
 export default new NoteController();
