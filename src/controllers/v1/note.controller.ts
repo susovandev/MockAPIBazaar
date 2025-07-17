@@ -1,4 +1,5 @@
 import {
+    TColorNoteDTO,
     TCreateNoteDTO,
     TResponseNoteDTO,
     TUpdateNoteDTO,
@@ -86,7 +87,10 @@ class NoteController {
 
     // Extra features
     togglePinNote = asyncHandler(
-        async (req: Request<{ id: string }>, res: Response) => {
+        async (
+            req: Request<{ id: string }>,
+            res: Response<ApiResponse<TResponseNoteDTO>>,
+        ) => {
             Logger.info(`Toggling pin note with id: ${req.params.id}`);
 
             const note = await noteServices.togglePinNote(req.params.id);
@@ -98,7 +102,10 @@ class NoteController {
     );
 
     toggleArchiveNote = asyncHandler(
-        async (req: Request<{ id: string }>, res: Response) => {
+        async (
+            req: Request<{ id: string }>,
+            res: Response<ApiResponse<TResponseNoteDTO>>,
+        ) => {
             Logger.info(`Toggling archive note with id: ${req.params.id}`);
 
             const note = await noteServices.toggleArchiveNote(req.params.id);
@@ -110,13 +117,37 @@ class NoteController {
     );
 
     toggleTrashNote = asyncHandler(
-        async (req: Request<{ id: string }>, res: Response) => {
+        async (
+            req: Request<{ id: string }>,
+            res: Response<ApiResponse<TResponseNoteDTO>>,
+        ) => {
             Logger.info(`Toggling trash note with id: ${req.params.id}`);
 
             const note = await noteServices.toggleTrashNote(req.params.id);
 
             res.status(StatusCodes.OK).json(
                 new ApiResponse(StatusCodes.OK, 'Trash toggled', note),
+            );
+        },
+    );
+
+    changeNoteColor = asyncHandler(
+        async (
+            req: Request<
+                { id: string },
+                unknown,
+                { colorLabel: TColorNoteDTO }
+            >,
+            res: Response<ApiResponse<TResponseNoteDTO>>,
+        ) => {
+            Logger.info(`Changing note color with id: ${req.params.id}`);
+            const note = await noteServices.changeNoteColor(
+                req.params.id,
+                req.body.colorLabel,
+            );
+
+            res.status(StatusCodes.OK).json(
+                new ApiResponse(StatusCodes.OK, 'Color changed', note),
             );
         },
     );

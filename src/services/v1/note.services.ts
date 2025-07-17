@@ -1,4 +1,4 @@
-import { TCreateNoteDTO, TUpdateNoteDTO } from '@/dtos/index.js';
+import { TCreateNoteDTO, TUpdateNoteDTO, TColorNoteDTO } from '@/dtos/index.js';
 import { NoteDAO } from '@/dao/index.js';
 import { INoteSchemaShape } from '@/interfaces/note.interface.js';
 import { NotFoundException } from '@/utils/customErrors.js';
@@ -90,6 +90,22 @@ class NoteServices {
         return await this.notesDao.updateNoteById(noteId, {
             isTrashed: !note.isTrashed,
         });
+    }
+    async changeNoteColor(
+        noteId: string,
+        colorLabel: TColorNoteDTO,
+    ): Promise<INoteSchemaShape | null> {
+        if (!isValidMongoObjectId(noteId)) {
+            throw new NotFoundException('Invalid note id');
+        }
+        const note = await this.notesDao.updateNoteById(noteId, {
+            colorLabel: colorLabel,
+        });
+
+        if (!note) {
+            throw new NotFoundException('Note not found');
+        }
+        return note;
     }
 }
 

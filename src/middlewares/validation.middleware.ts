@@ -1,10 +1,14 @@
+import Logger from '@/utils/logger.js';
 import { Request, Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { Schema } from 'joi';
 
 const schemaValidator = (schema: Schema) => {
     return (req: Request, res: Response, next: NextFunction) => {
-        const { error } = schema.validate(req.body, { abortEarly: false });
+        const { error, value } = schema.validate(req.body, {
+            abortEarly: false,
+        });
+        Logger.info(`Validation result: ${JSON.stringify(value)}`);
         if (error) {
             res.status(StatusCodes.BAD_REQUEST).json({
                 status: 'error',
@@ -14,6 +18,7 @@ const schemaValidator = (schema: Schema) => {
                 ),
             });
         }
+        req.body = value;
         next();
     };
 };
