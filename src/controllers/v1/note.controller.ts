@@ -83,5 +83,18 @@ class NoteController {
             );
         },
     );
+
+    // Extra features
+    togglePinNote = asyncHandler(
+        async (req: Request<{ id: string }>, res: Response) => {
+            Logger.info(`Toggling pin note with id: ${req.params.id}`);
+
+            const note = await noteServices.togglePinNote(req.params.id);
+
+            res.status(StatusCodes.OK).json(
+                new ApiResponse(StatusCodes.OK, 'Pin toggled', note),
+            );
+        },
+    );
 }
 export default new NoteController();

@@ -14,4 +14,6 @@ noteRouter
     .put(schemaValidator(UpdateNoteSchema), noteControllers.updateNoteById);
 noteRouter.route('/:id').delete(noteControllers.deleteNoteById);
 
+// Extra features
+noteRouter.patch('/:id/pin', noteControllers.togglePinNote);
 export default noteRouter;

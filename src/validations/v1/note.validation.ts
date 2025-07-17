@@ -18,4 +18,7 @@ export const UpdateNoteSchema: ObjectSchema<TUpdateNoteDTO> = Joi.object({
     priority: Joi.string().valid('low', 'medium', 'high'),
     colorLabel: Joi.string(),
     reminderAt: Joi.date(),
+    isPinned: Joi.boolean(),
+    isArchived: Joi.boolean(),
+    isTrashed: Joi.boolean(),
 }).or('title', 'content', 'tags', 'priority', 'colorLabel', 'reminderAt');

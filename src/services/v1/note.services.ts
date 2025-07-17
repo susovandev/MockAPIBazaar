@@ -51,6 +51,20 @@ class NoteServices {
             throw new NotFoundException('Note not found');
         }
     }
+
+    // Extra features
+    async togglePinNote(noteId: string): Promise<INoteSchemaShape | null> {
+        if (!isValidMongoObjectId(noteId)) {
+            throw new NotFoundException('Invalid note id');
+        }
+        const note = await this.notesDao.getNoteById(noteId);
+        if (!note) {
+            throw new NotFoundException('Note not found');
+        }
+        return await this.notesDao.updateNoteById(noteId, {
+            isPinned: !note.isPinned,
+        });
+    }
 }
 
 export default new NoteServices(new NoteDAO());
