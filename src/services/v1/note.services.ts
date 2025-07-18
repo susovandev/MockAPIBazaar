@@ -107,6 +107,25 @@ class NoteServices {
     // ----------- Extra Feature Methods -----------
 
     /**
+     * Soft delete a note by its ID.
+     * @param noteId - Note ID.
+     * @returns The soft-deleted note.
+     * @throws NotFoundException - If the note is not found or ID is invalid.
+     */
+    async softDelete(noteId: string): Promise<INoteSchemaShape> {
+        // check if noteId is valid
+        this.checkNoteIdOrThrow(noteId);
+
+        // check if note exists
+        const note = await this.notesDAO.updateNoteById(noteId, {
+            isTrashed: true,
+        });
+        this.checkNoteOrThrow(note);
+
+        return note;
+    }
+
+    /**
      * Toggle the pinned status of a note.
      * @param noteId - Note ID.
      * @returns The updated note with toggled pin status.

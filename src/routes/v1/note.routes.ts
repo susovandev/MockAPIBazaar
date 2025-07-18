@@ -44,6 +44,11 @@ noteRouter
 noteRouter.route('/:id').delete(noteControllers.deleteNoteById);
 
 // ----------- Extra Feature Routes -----------
+/**
+ * @route   PATCH /api/notes/:id/soft-delete
+ * @desc    Soft delete a note by ID
+ */
+noteRouter.route('/:id/soft-delete').delete(noteControllers.softDelete);
 
 /**
  * @route   PATCH /api/notes/:id/pin

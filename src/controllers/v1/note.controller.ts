@@ -98,6 +98,25 @@ class NoteController {
     // ----------- Extra Feature Methods -----------
 
     /**
+     * Trash a note by ID.
+     */
+    softDelete = asyncHandler(
+        async (req: Request<{ id: string }>, res: Response) => {
+            Logger.info(`Thrashing note with ID: ${req.params.id}`);
+
+            const note = await noteServices.softDelete(req.params.id);
+
+            res.status(StatusCodes.OK).json(
+                new ApiResponse(
+                    StatusCodes.OK,
+                    'Note Trashed successfully',
+                    note,
+                ),
+            );
+        },
+    );
+
+    /**
      * Toggle the pinned status of a note.
      */
     togglePinNote = asyncHandler(
