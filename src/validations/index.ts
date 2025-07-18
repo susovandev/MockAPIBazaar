@@ -1,7 +1,3 @@
-import {
-    createNoteSchema,
-    updateNoteSchema,
-    updateColorSchema,
-} from './v1/note.validation.js';
+import { createNoteSchema, updateNoteSchema } from './v1/note.validation.js';
 
-export { createNoteSchema, updateNoteSchema, updateColorSchema };
+export { createNoteSchema, updateNoteSchema };

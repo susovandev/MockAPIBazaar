@@ -4,7 +4,7 @@ import { CustomError } from '@/utils/customErrors.js';
 import Logger from '@/utils/logger.js';
 import { Request, Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
-
+import { MongooseError } from 'mongoose';
 const globalErrorHandler = (
     err: unknown,
     _: Request,
@@ -20,6 +20,13 @@ const globalErrorHandler = (
         });
     }
 
+    if (err instanceof MongooseError) {
+        res.status(StatusCodes.BAD_REQUEST).json({
+            status: 'error',
+            StatusCode: StatusCodes.BAD_REQUEST,
+            message: err.message,
+        });
+    }
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         status: 'error',
         StatusCode: StatusCodes.INTERNAL_SERVER_ERROR,

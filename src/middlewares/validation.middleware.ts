@@ -7,6 +7,8 @@ const schemaValidator = (schema: Schema) => {
     return (req: Request, res: Response, next: NextFunction) => {
         const { error, value } = schema.validate(req.body, {
             abortEarly: false,
+            allowUnknown: false,
+            stripUnknown: true,
         });
         Logger.info(`Validation result: ${JSON.stringify(value)}`);
         if (error) {
@@ -17,6 +19,7 @@ const schemaValidator = (schema: Schema) => {
                     err.message.replaceAll('"', ''),
                 ),
             });
+            return;
         }
         req.body = value;
         next();

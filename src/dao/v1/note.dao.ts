@@ -1,27 +1,49 @@
-import { TCreateNoteDTO, TUpdateNoteDTO } from '@/dtos/index.js';
-import { INoteSchemaShape } from '@/interfaces/note.interface.js';
+import { ICreateNoteDto, IUpdateNoteDto } from '@/interfaces/index.js';
 import { Note } from '@/models/note.model.js';
 
+/**
+ * Data Access Object (DAO) for Note model.
+ * Handles all database operations related to notes.
+ */
 export class NoteDAO {
-    async createNote(noteData: TCreateNoteDTO): Promise<INoteSchemaShape> {
+    /**
+     * Creates a new note document in the database.
+     * @param noteData - Data required to create the note.
+     * @returns A promise that resolves to the newly created note document.
+     */
+    async createNote(noteData: ICreateNoteDto) {
         return await Note.create(noteData);
     }
 
-    async getNoteById(noteId: string): Promise<INoteSchemaShape | null> {
-        const note = await Note.findById(noteId);
-        return note;
+    /**
+     * Finds a note by its ID.
+     * @param noteId - The ID of the note to retrieve.
+     * @returns A promise that resolves to the note if found, otherwise null.
+     */
+    async getNoteById(noteId: string) {
+        return await Note.findById(noteId);
     }
 
-    async updateNoteById(
-        noteId: string,
-        noteData: TUpdateNoteDTO,
-    ): Promise<INoteSchemaShape | null> {
+    /**
+     * Updates a note by its ID with the given data.
+     * @param noteId - The ID of the note to update.
+     * @param noteData - The fields to update in the note.
+     * @returns A promise that resolves to the updated note or null if not found.
+     */
+    async updateNoteById(noteId: string, noteData: Partial<IUpdateNoteDto>) {
         return await Note.findByIdAndUpdate({ _id: noteId }, noteData, {
-            new: true,
-        }).lean();
+            new: true, // Return the updated document
+        }).lean(); // Convert Mongoose document to plain JS object
     }
 
-    async deleteNoteById(noteId: string): Promise<INoteSchemaShape | null> {
+    /**
+     * Deletes a note by its ID.
+     * @param noteId - The ID of the note to delete.
+     * @returns A promise that resolves to the deleted note or null if not found.
+     */
+    async deleteNoteById(noteId: string) {
         return await Note.findByIdAndDelete(noteId).lean();
     }
 }
+
+export const noteDAO = new NoteDAO();

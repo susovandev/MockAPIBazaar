@@ -1,110 +1,194 @@
-import { TCreateNoteDTO, TUpdateNoteDTO, TColorNoteDTO } from '@/dtos/index.js';
 import { NoteDAO } from '@/dao/index.js';
-import { INoteSchemaShape } from '@/interfaces/note.interface.js';
+import {
+    ICreateNoteDto,
+    INoteSchemaShape,
+    IUpdateNoteDto,
+} from '@/interfaces/index.js';
 import { NotFoundException } from '@/utils/customErrors.js';
 import { isValidMongoObjectId } from '@/utils/isValidObjectId.js';
 
+/**
+ * Service class for handling note-related business logic.
+ */
 class NoteServices {
-    constructor(private readonly notesDao: NoteDAO) {}
-    async createNote(noteData: TCreateNoteDTO): Promise<INoteSchemaShape> {
-        const note = this.notesDao.createNote(noteData);
-        return note;
-    }
+    /**
+     * Constructs a new NoteServices instance.
+     * @param notesDAO - The NoteDAO instance for database operations.
+     */
+    constructor(private readonly notesDAO: NoteDAO) {}
 
-    async getNoteById(noteId: string): Promise<INoteSchemaShape> {
+    /**
+     * Check if the note ID is valid.
+     * @param noteId - Note ID.
+     * @throws NotFoundException - If the note ID is invalid.
+     */
+    private checkNoteIdOrThrow(noteId: string): void {
         if (!isValidMongoObjectId(noteId)) {
             throw new NotFoundException('Invalid note id');
         }
+    }
 
-        const note = await this.notesDao.getNoteById(noteId);
-
+    /**
+     * Check if the note exists.
+     * @param note - The note to check.
+     * @throws NotFoundException - If the note is not found.
+     */
+    private checkNoteOrThrow(
+        note: INoteSchemaShape | null,
+    ): asserts note is INoteSchemaShape {
         if (!note) {
             throw new NotFoundException('Note not found');
         }
+    }
+
+    /**
+     * Create a new note.
+     * @param noteData - Data to create the note.
+     * @returns The newly created note.
+     */
+    async createNote(noteData: ICreateNoteDto): Promise<INoteSchemaShape> {
+        // create the note
+        return await this.notesDAO.createNote(noteData);
+    }
+
+    /**
+     * Get a note by its ID.
+     * @param noteId - Note ID.
+     * @returns The requested note.
+     * @throws NotFoundException - If the note is not found or ID is invalid.
+     */
+    async getNoteById(noteId: string): Promise<INoteSchemaShape | null> {
+        // check if noteId is valid
+        this.checkNoteIdOrThrow(noteId);
+
+        // check if note exists
+        const note = await this.notesDAO.getNoteById(noteId);
+        this.checkNoteOrThrow(note);
+
         return note;
     }
 
+    /**
+     * Update a note by its ID.
+     * @param noteId - Note ID.
+     * @param noteData - Updated note data.
+     * @returns The updated note.
+     * @throws NotFoundException - If the note is not found or ID is invalid.
+     */
     async updateNoteById(
         noteId: string,
-        noteData: TUpdateNoteDTO,
+        noteData: IUpdateNoteDto,
     ): Promise<INoteSchemaShape> {
-        if (!isValidMongoObjectId(noteId)) {
-            throw new NotFoundException('Invalid note id');
-        }
+        // check if noteId is valid
+        this.checkNoteIdOrThrow(noteId);
 
-        const note = await this.notesDao.updateNoteById(noteId, noteData);
+        // check if note exists
+        const note = await this.notesDAO.updateNoteById(noteId, noteData);
+        this.checkNoteOrThrow(note);
 
-        if (!note) {
-            throw new NotFoundException('Note not found');
-        }
         return note;
     }
 
-    async deleteNoteById(noteId: string) {
-        if (!isValidMongoObjectId(noteId)) {
-            throw new NotFoundException('Invalid note id');
-        }
+    /**
+     * Delete a note by its ID.
+     * @param noteId - Note ID.
+     * @returns Void.
+     * @throws NotFoundException - If the note is not found or ID is invalid.
+     */
+    async deleteNoteById(noteId: string): Promise<void> {
+        // check if noteId is valid
+        this.checkNoteIdOrThrow(noteId);
 
-        const note = await this.notesDao.deleteNoteById(noteId);
-
-        if (!note) {
-            throw new NotFoundException('Note not found');
-        }
+        // check if note exists
+        const note = await this.notesDAO.deleteNoteById(noteId);
+        this.checkNoteOrThrow(note);
     }
 
-    // Extra features
-    async togglePinNote(noteId: string): Promise<INoteSchemaShape | null> {
-        if (!isValidMongoObjectId(noteId)) {
-            throw new NotFoundException('Invalid note id');
-        }
-        const note = await this.notesDao.getNoteById(noteId);
-        if (!note) {
-            throw new NotFoundException('Note not found');
-        }
-        return await this.notesDao.updateNoteById(noteId, {
+    // ----------- Extra Feature Methods -----------
+
+    /**
+     * Toggle the pinned status of a note.
+     * @param noteId - Note ID.
+     * @returns The updated note with toggled pin status.
+     * @throws NotFoundException - If the note is not found or ID is invalid.
+     */
+    async togglePinNote(noteId: string): Promise<INoteSchemaShape> {
+        // check if noteId is valid
+        this.checkNoteIdOrThrow(noteId);
+
+        // check if note exists
+        const note = await this.notesDAO.getNoteById(noteId);
+        this.checkNoteOrThrow(note);
+
+        // toggle the pinned status
+        const updatedNote = await this.notesDAO.updateNoteById(noteId, {
             isPinned: !note.isPinned,
         });
+        return updatedNote!; // ! is used to assert that the note is not null
     }
 
-    async toggleArchiveNote(noteId: string): Promise<INoteSchemaShape | null> {
-        if (!isValidMongoObjectId(noteId)) {
-            throw new NotFoundException('Invalid note id');
-        }
-        const note = await this.notesDao.getNoteById(noteId);
-        if (!note) {
-            throw new NotFoundException('Note not found');
-        }
-        return await this.notesDao.updateNoteById(noteId, {
+    /**
+     * Toggle the archived status of a note.
+     * @param noteId - Note ID.
+     * @returns The updated note with toggled archive status.
+     * @throws NotFoundException - If the note is not found or ID is invalid.
+     */
+    async toggleArchiveNote(noteId: string): Promise<INoteSchemaShape> {
+        // check if noteId is valid
+        this.checkNoteIdOrThrow(noteId);
+
+        // check if note exists
+        const note = await this.notesDAO.getNoteById(noteId);
+        this.checkNoteOrThrow(note);
+
+        // toggle the archived status
+        const updatedNote = await this.notesDAO.updateNoteById(noteId, {
             isArchived: !note.isArchived,
         });
+        return updatedNote!; // ! is used to assert that the note is not null
     }
 
-    async toggleTrashNote(noteId: string): Promise<INoteSchemaShape | null> {
-        if (!isValidMongoObjectId(noteId)) {
-            throw new NotFoundException('Invalid note id');
-        }
-        const note = await this.notesDao.getNoteById(noteId);
-        if (!note) {
-            throw new NotFoundException('Note not found');
-        }
-        return await this.notesDao.updateNoteById(noteId, {
+    /**
+     * Toggle the trashed status of a note.
+     * @param noteId - Note ID.
+     * @returns The updated note with toggled trash status.
+     * @throws NotFoundException - If the note is not found or ID is invalid.
+     */
+    async toggleTrashNote(noteId: string): Promise<INoteSchemaShape> {
+        // check if noteId is valid
+        this.checkNoteIdOrThrow(noteId);
+
+        // check if note exists
+        const note = await this.notesDAO.getNoteById(noteId);
+        this.checkNoteOrThrow(note);
+
+        // toggle the trashed status
+        const updatedNote = await this.notesDAO.updateNoteById(noteId, {
             isTrashed: !note.isTrashed,
         });
+        return updatedNote!; // ! is used to assert that the note is not null
     }
+
+    /**
+     * Change the color of a note.
+     * @param noteId - Note ID.
+     * @param color - New color label for the note.
+     * @returns The updated note with new color.
+     * @throws NotFoundException - If the note is not found or ID is invalid.
+     */
     async changeNoteColor(
         noteId: string,
-        colorLabel: TColorNoteDTO,
-    ): Promise<INoteSchemaShape | null> {
-        if (!isValidMongoObjectId(noteId)) {
-            throw new NotFoundException('Invalid note id');
-        }
-        const note = await this.notesDao.updateNoteById(noteId, {
-            colorLabel: colorLabel,
-        });
+        color: string,
+    ): Promise<INoteSchemaShape> {
+        // check if noteId is valid
+        this.checkNoteIdOrThrow(noteId);
 
-        if (!note) {
-            throw new NotFoundException('Note not found');
-        }
+        // check if note exists
+        const note = await this.notesDAO.updateNoteById(noteId, {
+            colorLabel: color,
+        });
+        this.checkNoteOrThrow(note);
+
         return note;
     }
 }

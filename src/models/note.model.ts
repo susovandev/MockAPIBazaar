@@ -33,9 +33,11 @@ const noteSchema: Schema<INoteSchemaShape> = new Schema(
         },
         colorLabel: {
             type: String,
+            default: '#00FF00',
         },
         reminderAt: {
             type: Date,
+            default: null,
         },
         user: {
             type: Schema.Types.ObjectId,
