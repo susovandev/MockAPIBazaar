@@ -178,14 +178,37 @@ class NoteServices {
      */
     async changeNoteColor(
         noteId: string,
-        color: string,
+        colorLabel: string,
     ): Promise<INoteSchemaShape> {
         // check if noteId is valid
         this.checkNoteIdOrThrow(noteId);
 
         // check if note exists
         const note = await this.notesDAO.updateNoteById(noteId, {
-            colorLabel: color,
+            colorLabel: colorLabel,
+        });
+        this.checkNoteOrThrow(note);
+
+        return note;
+    }
+    /**
+     * Set a reminder for a note.
+     * @param noteId - Note ID.
+     * @param date - Date for the reminder.
+     * @returns The updated note with new reminder.
+     * @throws NotFoundException - If the note is not found or ID is invalid.
+     */
+
+    async setReminderNote(
+        noteId: string,
+        date: Date,
+    ): Promise<INoteSchemaShape> {
+        // check if noteId is valid
+        this.checkNoteIdOrThrow(noteId);
+
+        // check if note exists
+        const note = await this.notesDAO.updateNoteById(noteId, {
+            reminderAt: date,
         });
         this.checkNoteOrThrow(note);
 

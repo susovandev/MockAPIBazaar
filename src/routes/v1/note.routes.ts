@@ -2,7 +2,12 @@ import { Router } from 'express';
 
 import { noteControllers } from '@/controllers/index.js';
 import schemaValidator from '@/middlewares/validation.middleware.js';
-import { createNoteSchema, updateNoteSchema } from '@/validations/index.js';
+import {
+    createNoteSchema,
+    updateNoteSchema,
+    colorSchema,
+    reminderAtSchema,
+} from '@/validations/index.js';
 
 const noteRouter: Router = Router();
 
@@ -62,6 +67,16 @@ noteRouter.route('/:id/trash').patch(noteControllers.toggleTrashNote);
  * @route   PATCH /api/notes/:id/color
  * @desc    Change color label of a note
  */
-noteRouter.route('/:id/color').patch(noteControllers.changeNoteColor);
+noteRouter
+    .route('/:id/color')
+    .patch(schemaValidator(colorSchema), noteControllers.changeNoteColor);
+
+/**
+ * @route   PATCH /api/notes/:id/reminder
+ * @desc    Set a reminder for a note
+ */
+noteRouter
+    .route('/:id/reminder')
+    .patch(schemaValidator(reminderAtSchema), noteControllers.setReminderNote);
 
 export default noteRouter;

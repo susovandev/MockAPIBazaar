@@ -31,3 +31,14 @@ export const updateNoteSchema = Joi.object({
     'isArchived',
     'isTrashed',
 );
+
+export const colorSchema = Joi.object({
+    colorLabel: Joi.string()
+        .pattern(/^#(?:[0-9a-fA-F]{3}){1,2}$/)
+        .required()
+        .label('colorLabel'),
+});
+
+export const reminderAtSchema = Joi.object({
+    date: Joi.date().required().label('date'),
+});

@@ -25,8 +25,8 @@ export class App {
     }
 
     private setupMiddlewares() {
-        this.app.use(express.json({ limit: '10kb', strict: true }));
-        this.app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+        this.app.use(express.json({ limit: '100kb', strict: true }));
+        this.app.use(express.urlencoded({ extended: true, limit: '100kb' }));
     }
     private setupRoutes() {
         appRoutes(this.app);

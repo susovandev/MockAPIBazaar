@@ -159,22 +159,49 @@ class NoteController {
      */
     changeNoteColor = asyncHandler(
         async (
-            req: Request<{ id: string }, unknown, { color: string }>,
+            req: Request<{ id: string }, unknown, { colorLabel: string }>,
             res: Response,
         ) => {
             Logger.info(
-                `Changing color of note ID: ${req.params.id} to ${req.body.color}`,
+                `Changing color of note ID: ${req.params.id} to ${req.body.colorLabel}`,
             );
 
             const note = await noteServices.changeNoteColor(
                 req.params.id,
-                req.body.color,
+                req.body.colorLabel,
             );
 
             res.status(StatusCodes.OK).json(
                 new ApiResponse(
                     StatusCodes.OK,
                     'Color changed successfully',
+                    note,
+                ),
+            );
+        },
+    );
+
+    /**
+     * Set a reminder for a not
+     */
+    setReminderNote = asyncHandler(
+        async (
+            req: Request<{ id: string }, unknown, { date: Date }>,
+            res: Response,
+        ) => {
+            Logger.info(
+                `Reminding note ID: ${req.params.id} to ${req.body.date}`,
+            );
+
+            const note = await noteServices.setReminderNote(
+                req.params.id,
+                req.body.date,
+            );
+
+            res.status(StatusCodes.OK).json(
+                new ApiResponse(
+                    StatusCodes.OK,
+                    'Reminder set successfully',
                     note,
                 ),
             );
