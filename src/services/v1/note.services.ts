@@ -4,7 +4,10 @@ import {
     INoteSchemaShape,
     IUpdateNoteDto,
 } from '@/interfaces/index.js';
-import { NotFoundException } from '@/utils/customErrors.js';
+import {
+    BadRequestException,
+    NotFoundException,
+} from '@/utils/customErrors.js';
 import { isValidMongoObjectId } from '@/utils/isValidObjectId.js';
 
 /**
@@ -44,7 +47,7 @@ class NoteServices {
     /**
      * Create a new note.
      * @param noteData - Data to create the note.
-     * @returns The newly created note.
+     * @returns {Promise<INoteSchemaShape>} The newly created note.
      */
     async createNote(noteData: ICreateNoteDto): Promise<INoteSchemaShape> {
         // create the note
@@ -52,9 +55,42 @@ class NoteServices {
     }
 
     /**
+     * Get all notes.
+     * @param page - The page number (0-based index).
+     * @param limit - The number of notes to retrieve per page..
+     * @returns The newly created note.
+     */
+    async getAllNotes(page: number, limit: number) {
+        // check if page and limit are valid
+        if (page < 0)
+            throw new BadRequestException('Page number must be non-negative');
+
+        if (limit < 0 || limit > 100)
+            throw new BadRequestException('Limit must be between 1 and 100');
+
+        // get list of notes
+        const notes = await this.notesDAO.getAllNotes(page, limit);
+        // get total number of notes
+        const totalNotes = await this.notesDAO.getTotalNotesCount();
+
+        return {
+            notes, // list of notes
+            pagination: {
+                // pagination data
+                currentPage: page,
+                limit,
+                totalNotes,
+                totalPages: Math.ceil(totalNotes / limit),
+                hasNextPage: page < Math.ceil(totalNotes / limit) - 1,
+                hasPrevPage: page > 0,
+            },
+        };
+    }
+
+    /**
      * Get a note by its ID.
      * @param noteId - Note ID.
-     * @returns The requested note.
+     * @returns {Promise<INoteSchemaShape>} The requested note.
      * @throws NotFoundException - If the note is not found or ID is invalid.
      */
     async getNoteById(noteId: string): Promise<INoteSchemaShape | null> {
@@ -72,7 +108,7 @@ class NoteServices {
      * Update a note by its ID.
      * @param noteId - Note ID.
      * @param noteData - Updated note data.
-     * @returns The updated note.
+     * @returns {Promise<INoteSchemaShape>} The updated note.
      * @throws NotFoundException - If the note is not found or ID is invalid.
      */
     async updateNoteById(
@@ -92,7 +128,7 @@ class NoteServices {
     /**
      * Delete a note by its ID.
      * @param noteId - Note ID.
-     * @returns Void.
+     * @returns {Promise<void>} Void.
      * @throws NotFoundException - If the note is not found or ID is invalid.
      */
     async deleteNoteById(noteId: string): Promise<void> {
@@ -109,7 +145,7 @@ class NoteServices {
     /**
      * Soft delete a note by its ID.
      * @param noteId - Note ID.
-     * @returns The soft-deleted note.
+     * @returns {Promise<INoteSchemaShape>} The soft-deleted note.
      * @throws NotFoundException - If the note is not found or ID is invalid.
      */
     async softDelete(noteId: string): Promise<INoteSchemaShape> {
@@ -128,7 +164,7 @@ class NoteServices {
     /**
      * Toggle the pinned status of a note.
      * @param noteId - Note ID.
-     * @returns The updated note with toggled pin status.
+     * @returns {Promise<INoteSchemaShape>} The updated note with toggled pin status.
      * @throws NotFoundException - If the note is not found or ID is invalid.
      */
     async togglePinNote(noteId: string): Promise<INoteSchemaShape> {
@@ -149,7 +185,7 @@ class NoteServices {
     /**
      * Toggle the archived status of a note.
      * @param noteId - Note ID.
-     * @returns The updated note with toggled archive status.
+     * @returns {Promise<INoteSchemaShape>} The updated note with toggled archive status.
      * @throws NotFoundException - If the note is not found or ID is invalid.
      */
     async toggleArchiveNote(noteId: string): Promise<INoteSchemaShape> {
@@ -170,7 +206,7 @@ class NoteServices {
     /**
      * Toggle the trashed status of a note.
      * @param noteId - Note ID.
-     * @returns The updated note with toggled trash status.
+     * @returns {Promise<INoteSchemaShape>} The updated note with toggled trash status.
      * @throws NotFoundException - If the note is not found or ID is invalid.
      */
     async toggleTrashNote(noteId: string): Promise<INoteSchemaShape> {
@@ -192,7 +228,7 @@ class NoteServices {
      * Change the color of a note.
      * @param noteId - Note ID.
      * @param color - New color label for the note.
-     * @returns The updated note with new color.
+     * @returns {Promise<INoteSchemaShape>} The updated note with new color.
      * @throws NotFoundException - If the note is not found or ID is invalid.
      */
     async changeNoteColor(
@@ -214,7 +250,7 @@ class NoteServices {
      * Set a reminder for a note.
      * @param noteId - Note ID.
      * @param date - Date for the reminder.
-     * @returns The updated note with new reminder.
+     * @returns {Promise<INoteSchemaShape>} The updated note with new reminder.
      * @throws NotFoundException - If the note is not found or ID is invalid.
      */
 

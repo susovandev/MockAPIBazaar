@@ -5,6 +5,7 @@ import { noteServices } from '@/services/index.js';
 import { ApiResponse } from '@/utils/apiResponse.js';
 import { asyncHandler } from '@/utils/asyncHandler.js';
 import Logger from '@/utils/logger.js';
+import { config } from '@/config/_config.js';
 
 /**
  * Controller class to handle HTTP requests for notes.
@@ -29,6 +30,37 @@ class NoteController {
                     StatusCodes.CREATED,
                     'Note created successfully',
                     note,
+                ),
+            );
+        },
+    );
+
+    /**
+     * Retrieve all notes.
+     */
+    getAllNotes = asyncHandler(
+        async (
+            req: Request<
+                unknown,
+                unknown,
+                unknown,
+                { page: string; limit: string }
+            >,
+            res: Response,
+        ) => {
+            const page = parseInt(req.query.page) || config.pagination.page; // get default page number from .env
+            const limit = parseInt(req.query.limit) || config.pagination.limit; /// get default limit number from .env
+            Logger.info(
+                `Fetching all notes with page: ${page} and limit: ${limit}`,
+            );
+
+            const result = await noteServices.getAllNotes(page, limit);
+
+            res.status(StatusCodes.OK).json(
+                new ApiResponse(
+                    StatusCodes.OK,
+                    'Notes fetched successfully',
+                    result,
                 ),
             );
         },

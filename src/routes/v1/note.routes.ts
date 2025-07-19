@@ -14,11 +14,18 @@ const noteRouter: Router = Router();
 /**
  * @route   POST /api/notes/
  * @desc    Create a new note
- * @access  Public (or use auth middleware if needed)
+ * @access  Public
  */
 noteRouter
     .route('/')
     .post(schemaValidator(createNoteSchema), noteControllers.createNote);
+
+/**
+ * @route   GET /api/notes/?page=1&limit=10
+ * @desc    Get all notes
+ * @access  Public
+ */
+noteRouter.route('/').get(noteControllers.getAllNotes);
 
 /**
  * @route   GET /api/notes/:id
@@ -45,7 +52,7 @@ noteRouter.route('/:id').delete(noteControllers.deleteNoteById);
 
 // ----------- Extra Feature Routes -----------
 /**
- * @route   PATCH /api/notes/:id/soft-delete
+ * @route   DELETE /api/notes/:id/soft-delete
  * @desc    Soft delete a note by ID
  */
 noteRouter.route('/:id/soft-delete').delete(noteControllers.softDelete);

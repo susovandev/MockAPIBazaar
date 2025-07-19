@@ -8,6 +8,10 @@ const _config = {
         production_uri: process.env.PRODUCTION_DATABASE_URI as string,
         development_uri: process.env.DEVELOPMENT_DATABASE_URI as string,
     },
+    pagination: {
+        limit: Number(process.env.PAGINATION_LIMIT) || 10,
+        page: Number(process.env.PAGINATION_PAGE) || 0,
+    },
 };
 
 export const config = Object.freeze(_config);
