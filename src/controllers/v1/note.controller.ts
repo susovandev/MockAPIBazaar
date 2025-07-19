@@ -44,17 +44,37 @@ class NoteController {
                 unknown,
                 unknown,
                 unknown,
-                { page: string; limit: string }
+                {
+                    page?: string;
+                    limit?: string;
+                    sortBy?: string;
+                    order?: 'asc' | 'desc';
+                    search?: string;
+                    priority?: string;
+                    tags?: string;
+                    colorLabel?: string;
+                }
             >,
             res: Response,
         ) => {
-            const page = parseInt(req.query.page) || config.pagination.page; // get default page number from .env
-            const limit = parseInt(req.query.limit) || config.pagination.limit; /// get default limit number from .env
+            const page = Number(req.query?.page) || config.pagination.page; // get default page number from .env
+            const limit = Number(req.query?.limit) || config.pagination.limit; /// get default limit number from .env
+            const { sortBy, order, search, priority, tags, colorLabel } =
+                req.query;
+
+            const filters = {
+                search,
+                priority,
+                tags: tags?.split(','),
+                colorLabel,
+                sortBy,
+                order,
+            };
             Logger.info(
                 `Fetching all notes with page: ${page} and limit: ${limit}`,
             );
 
-            const result = await noteServices.getAllNotes(page, limit);
+            const result = await noteServices.getAllNotes(page, limit, filters);
 
             res.status(StatusCodes.OK).json(
                 new ApiResponse(

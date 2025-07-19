@@ -31,21 +31,19 @@ export class NoteDAO {
     async getAllNotes(
         page: number,
         limit: number,
+        query: Record<string, unknown>,
+        sort: Record<string, 1 | -1>,
     ): Promise<INoteSchemaShape[]> {
         const skip = page * limit; // Calculate number of documents to skip
-        return await Note.find()
-            .skip(skip)
-            .limit(limit)
-            .sort({ createdAt: -1 })
-            .lean(); // Convert Mongoose documents to plain JS objects
+        return await Note.find(query).skip(skip).limit(limit).sort(sort).lean(); // Convert Mongoose documents to plain JS objects
     }
 
     /**
      * Retrieves the total count of note documents from the database.
      * @returns {Promise<number>} - A promise resolving to the total number of notes.
      */
-    async getTotalNotesCount(): Promise<number> {
-        return await Note.countDocuments();
+    async getTotalNotesCount(query: Record<string, unknown>): Promise<number> {
+        return await Note.countDocuments(query);
     }
 
     /**

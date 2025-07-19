@@ -55,28 +55,80 @@ class NoteServices {
     }
 
     /**
-     * Get all notes.
+     * Retrieves all notes based on pagination and optional filters such as search, priority, tags, colorLabel, and sorting.
+     *
      * @param page - The page number (0-based index).
-     * @param limit - The number of notes to retrieve per page..
-     * @returns The newly created note.
+     * @param limit - The number of notes to retrieve per page.
+     * @param filters - Object containing filter and sort options:
+     *   - search: Search keyword to match against title or content.
+     *   - priority: Filter notes by their priority (low, medium, high).
+     *   - tags: Filter notes by matching any tag.
+     *   - colorLabel: Filter notes by color label.
+     *   - sortBy: Field to sort the notes by (default: createdAt).
+     *   - order: Sort order ('asc' or 'desc').
+     * @returns An object containing the list of notes and pagination details.
      */
-    async getAllNotes(page: number, limit: number) {
-        // check if page and limit are valid
+    async getAllNotes(
+        page: number,
+        limit: number,
+        filters: {
+            search?: string;
+            priority?: string;
+            tags?: string[];
+            colorLabel?: string;
+            sortBy?: string;
+            order?: 'asc' | 'desc';
+        },
+    ): Promise<{
+        notes: INoteSchemaShape[];
+        pagination: {
+            currentPage: number;
+            limit: number;
+            totalNotes: number;
+            totalPages: number;
+            hasNextPage: boolean;
+            hasPrevPage: boolean;
+        };
+    }> {
+        // Validate page number
         if (page < 0)
             throw new BadRequestException('Page number must be non-negative');
 
+        // Validate limit range
         if (limit < 0 || limit > 100)
             throw new BadRequestException('Limit must be between 1 and 100');
 
+        // Initialize query object to build dynamic MongoDB query
+        const query: Record<string, unknown> = {};
+
+        // Add priority filter if present
+        if (filters.priority) query.priority = filters.priority;
+
+        // Add color label filter if present
+        if (filters.colorLabel) query.colorLabel = filters.colorLabel;
+
+        // Add tags filter using $in operator (matches any of the provided tags)
+        if (filters.tags?.length) query.tags = { $in: filters.tags };
+
+        // Add full-text search using case-insensitive regex on title or content
+        if (filters.search) {
+            query.$or = [
+                { title: { $regex: filters.search, $options: 'i' } },
+                { content: { $regex: filters.search, $options: 'i' } },
+            ];
+        }
+        // Sort config
+        const sort: Record<string, 1 | -1> = {
+            [filters.sortBy || 'createdAt']: filters.order === 'asc' ? 1 : -1,
+        };
         // get list of notes
-        const notes = await this.notesDAO.getAllNotes(page, limit);
+        const notes = await this.notesDAO.getAllNotes(page, limit, query, sort);
         // get total number of notes
-        const totalNotes = await this.notesDAO.getTotalNotesCount();
+        const totalNotes = await this.notesDAO.getTotalNotesCount(query);
 
         return {
             notes, // list of notes
             pagination: {
-                // pagination data
                 currentPage: page,
                 limit,
                 totalNotes,
